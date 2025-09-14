@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %} Tweet Form {% endblock %}
+{% block content %}
+
+<h2 class="text-center mb-4">
+  {% if form.instance.pk %} Edit Tweet {% else %} Create Tweet {% endif %}
+</h2>
+
+<div class="container" style="max-width: 900px;">
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <div class="d-flex gap-4">
+      <!-- Left: Form Fields -->
+      <div class="flex-grow-1">
+        {{ form.as_p }}
+      </div>
+
+      <!-- Right: Image Preview -->
+      <div id="previewContainer" class="d-none">
+        <div class="preview-box">
+          <img id="imagePreview" alt="Image Preview">
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100 mt-3">Save Tweet</button>
+  </form>
+</div>
+
+<style>
+  .preview-box {
+    width: 350px;
+    height: 220px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background: #f8f9fa;
+  }
+
+  .preview-box img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+</style>
+
+<script>
+  const fileInput = document.querySelector('input[type="file"]');
+  const previewContainer = document.getElementById('previewContainer');
+  const preview = document.getElementById('imagePreview');
+
+  if (fileInput) {
+    fileInput.addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          preview.src = e.target.result;
+          previewContainer.classList.remove('d-none'); // show preview
+        };
+        reader.readAsDataURL(file);
+      } else {
+        preview.src = "";
+        previewContainer.classList.add('d-none'); // hide preview
+      }
+    });
+  }
+</script>
+
+{% endblock %}
